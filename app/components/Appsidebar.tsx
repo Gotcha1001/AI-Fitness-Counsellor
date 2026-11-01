@@ -17,6 +17,7 @@ import {
   ClipboardList,
   CalendarCheck,
   Settings,
+  Palette,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { href: "/plan", label: "My 6-Month Plan", icon: ClipboardList },
   { href: "/check-in", label: "Monthly Check-in", icon: CalendarCheck },
   { href: "/settings", label: "My Profile", icon: Settings },
+  { href: "/appearance", label: "Appearance", icon: Palette },
 ];
 
 export function AppSidebar() {
@@ -37,14 +39,16 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-3 py-3">
-          <span className="text-2xl">💪</span>
-          <div>
-            <p className="text-sm font-black text-black dark:text-white">
-              <span className="text-emerald-500">FIT</span>{" "}
-              <span className="text-teal-500">COACH</span>
-            </p>
-            <p className="text-[10px] text-gray-400">Your AI life coach</p>
-          </div>
+          <Link href="/">
+            <span className="text-2xl">💪</span>
+            <div>
+              <p className="text-sm font-black text-black dark:text-white">
+                <span className="text-emerald-500">FIT</span>{" "}
+                <span className="text-teal-500">COACH</span>
+              </p>
+              <p className="text-[10px] text-gray-400">Your AI life coach</p>
+            </div>
+          </Link>
         </div>
       </SidebarHeader>
       <SidebarContent>

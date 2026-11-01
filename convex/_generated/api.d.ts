@@ -10,6 +10,7 @@
 
 import type * as checkIns from "../checkIns.js";
 import type * as coach from "../coach.js";
+import type * as lib_appearance from "../lib/appearance.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_nutrition from "../lib/nutrition.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
@@ -29,6 +30,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   checkIns: typeof checkIns;
   coach: typeof coach;
+  "lib/appearance": typeof lib_appearance;
   "lib/auth": typeof lib_auth;
   "lib/nutrition": typeof lib_nutrition;
   "lib/openrouter": typeof lib_openrouter;
