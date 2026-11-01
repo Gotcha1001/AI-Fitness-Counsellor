@@ -7,6 +7,7 @@ import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { PlanView } from "@/app/components/PlanView";
+import { PlanGeneratingModal } from "@/app/components/PlanGeneratingModal";
 import { useCoach } from "@/hooks/useCoach";
 
 export default function PlanPage() {
@@ -37,6 +38,12 @@ export default function PlanPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-4">
+      {/* Full-screen "coach is thinking" modal while the plan is being written */}
+      <PlanGeneratingModal
+        open={plan?.status === "generating"}
+        progressChars={plan?.progressChars ?? 0}
+        sessionKey={plan?._id}
+      />
       <h1 className="text-2xl font-black text-black dark:text-white">
         My 6-month plan
       </h1>
