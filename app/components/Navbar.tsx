@@ -6,19 +6,18 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Dumbbell } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-
 import { ThemeToggle } from "./ThemeToggle";
 import { CyberStyles } from "./Cyber";
 
 const NAV_CSS = `
 .cpn-bar{background:linear-gradient(90deg,color-mix(in oklab,var(--cp-bg) 92%,transparent),color-mix(in oklab,var(--cp-surface) 92%,transparent));backdrop-filter:blur(12px)}
 .cpn-sweep{background:linear-gradient(90deg,transparent,var(--c2),var(--c1),transparent);
-  background-size:40% 100%;background-repeat:no-repeat;animation:cpn-sweep 4s ease-in-out infinite}
+background-size:40% 100%;background-repeat:no-repeat;animation:cpn-sweep 4s ease-in-out infinite}
 .cpn-hex{clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
-  background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--cp-btn-fg);transition:transform .4s,filter .2s}
+background:linear-gradient(135deg,var(--c1),var(--c2));color:var(--cp-btn-fg);transition:transform .4s,filter .2s}
 .cpn-logo:hover .cpn-hex{transform:rotate(180deg);filter:brightness(1.2) drop-shadow(0 0 8px var(--c1))}
 .cpn-trigger{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
-  background:var(--cp-tint)!important;box-shadow:inset 0 0 0 1px var(--c2);color:var(--c2)!important;border-radius:0!important}
+background:var(--cp-tint)!important;box-shadow:inset 0 0 0 1px var(--c2);color:var(--c2)!important;border-radius:0!important}
 .cpn-trigger:hover{background:color-mix(in oklab,var(--c2) 12%,transparent)!important}
 @keyframes cpn-sweep{0%{background-position:-50% 0}100%{background-position:150% 0}}
 `;
@@ -37,7 +36,8 @@ export default function Navbar() {
       <style>{NAV_CSS}</style>
 
       <div className="flex items-center justify-self-start">
-        <SidebarTrigger className="cpn-trigger md:hidden" />
+        {/* Always visible — works on both mobile and desktop */}
+        <SidebarTrigger className="cpn-trigger" />
       </div>
 
       <div className="justify-self-center">
@@ -83,6 +83,7 @@ export default function Navbar() {
             </Link>
           </span>
         </SignedOut>
+
         <SignedIn>
           <ThemeToggle />
           {/* Fixed square size + overflow so the gradient ring stays perfectly circular */}
