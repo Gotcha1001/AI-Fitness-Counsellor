@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
@@ -18,12 +19,12 @@ import {
   Settings,
   Palette,
   Dumbbell,
+  PanelLeftClose,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { motion, useReducedMotion } from "framer-motion";
-
 import { CyberStyles, Frame, HudLabel } from "@/app/components/Cyber";
 
 const NAV_ITEMS = [
@@ -38,14 +39,14 @@ const NAV_ITEMS = [
 const SIDEBAR_CSS = `
 .cp-sidebar{background:var(--cp-bg);position:relative;overflow:hidden}
 .cp-sidebar .cp-nav{position:relative;height:2.6rem;border-radius:0;
-  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
-  background:var(--cp-tint);box-shadow:inset 0 0 0 1px var(--cp-line);
-  color:var(--cp-muted);transition:color .2s,box-shadow .2s,background .2s,padding-left .2s}
+clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+background:var(--cp-tint);box-shadow:inset 0 0 0 1px var(--cp-line);
+color:var(--cp-muted);transition:color .2s,box-shadow .2s,background .2s,padding-left .2s}
 .cp-sidebar .cp-nav:hover{color:var(--cp-fg);background:color-mix(in oklab,var(--c2) 8%,transparent);
-  box-shadow:inset 0 0 0 1px var(--c2);padding-left:1rem}
+box-shadow:inset 0 0 0 1px var(--c2);padding-left:1rem}
 .cp-sidebar .cp-nav[data-active="true"]{color:var(--c1);
-  background:color-mix(in oklab,var(--c1) 14%,transparent);
-  box-shadow:inset 0 0 0 1px var(--c1)}
+background:color-mix(in oklab,var(--c1) 14%,transparent);
+box-shadow:inset 0 0 0 1px var(--c1)}
 .cp-sidebar .cp-nav:hover svg{filter:drop-shadow(0 0 6px var(--c2))}
 .cp-sidebar .cp-nav[data-active="true"] svg{filter:drop-shadow(0 0 6px var(--c1))}
 .cps-spin{transform-box:fill-box;transform-origin:center;animation:cps-spin 9s linear infinite}
@@ -54,11 +55,11 @@ const SIDEBAR_CSS = `
 .cps-logo:hover .cps-spin-r{animation-duration:3.5s}
 .cps-pulse{animation:cps-pulse 3s ease-in-out infinite}
 .cps-sweep{background:linear-gradient(90deg,transparent,var(--c2),var(--c1),transparent);
-  background-size:50% 100%;background-repeat:no-repeat;animation:cps-sweep 3.2s ease-in-out infinite}
+background-size:50% 100%;background-repeat:no-repeat;animation:cps-sweep 3.2s ease-in-out infinite}
 .cps-bob{animation:cps-bob 2.6s ease-in-out infinite}
 @keyframes cps-spin{to{transform:rotate(360deg)}}
 @keyframes cps-pulse{0%,100%{filter:drop-shadow(0 0 4px color-mix(in oklab,var(--c1) 50%,transparent))}
-  50%{filter:drop-shadow(0 0 14px color-mix(in oklab,var(--c2) 80%,transparent))}}
+50%{filter:drop-shadow(0 0 14px color-mix(in oklab,var(--c2) 80%,transparent))}}
 @keyframes cps-sweep{0%{background-position:-60% 0}100%{background-position:160% 0}}
 @keyframes cps-bob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-1.5px) rotate(8deg)}}
 `;
@@ -68,7 +69,7 @@ function Logo() {
     <Link
       href="/"
       aria-label="Fit Coach home"
-      className="cps-logo group flex items-center gap-3"
+      className="cps-logo group flex items-center gap-3 min-w-0"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.4, rotate: -90 }}
@@ -123,7 +124,6 @@ function Logo() {
           <Dumbbell size={22} strokeWidth={2.4} />
         </span>
       </motion.div>
-
       <motion.div
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
@@ -157,10 +157,14 @@ export function AppSidebar() {
   const { user } = useUser();
   const pathname = usePathname();
   const reduce = useReducedMotion();
+  const { toggleSidebar } = useSidebar();
 
   // Navbar is h-14 and sits above the sidebar, so the desktop sidebar starts below it.
   return (
-    <Sidebar className="border-r border-[color:var(--cp-line)] md:top-14 md:h-[calc(100svh-3.5rem)] [&_[data-sidebar=sidebar]]:bg-[var(--cp-bg)]">
+    <Sidebar
+      collapsible="offcanvas"
+      className="border-r border-[color:var(--cp-line)] md:top-14 md:h-[calc(100svh-3.5rem)] [&_[data-sidebar=sidebar]]:bg-[var(--cp-bg)]"
+    >
       <div className="cp cp-sidebar flex h-full min-h-0 flex-col text-[color:var(--cp-fg)]">
         <CyberStyles />
         <style>{SIDEBAR_CSS}</style>
@@ -179,8 +183,16 @@ export function AppSidebar() {
         </div>
 
         <SidebarHeader className="relative z-10 p-0">
-          <div className="px-4 pb-3 pt-4">
+          <div className="flex items-center justify-between gap-2 px-4 pb-3 pt-4">
             <Logo />
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-[color:var(--c2)] transition-colors hover:text-[color:var(--c1)] hover:bg-[color:var(--c2)]/10"
+              aria-label="Close sidebar"
+            >
+              <PanelLeftClose size={18} />
+            </button>
           </div>
           <div className="relative h-px w-full bg-[var(--cp-line)]">
             {!reduce && <div className="cps-sweep absolute inset-0" />}
