@@ -1,4 +1,5 @@
 // app/components/PlanView.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -7,9 +8,7 @@ import type { Doc } from "@/convex/_generated/dataModel";
 import type { PlanContent, UnitSystem } from "@/convex/lib/validators";
 import { currentMonth } from "@/convex/lib/schedule";
 import { formatWeight } from "@/lib/units";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Frame, HudLabel, SectionHead } from "@/app/components/Cyber";
 
 interface PlanViewProps {
   plan: Doc<"plans">;
@@ -19,16 +18,18 @@ interface PlanViewProps {
 }
 
 function Pills({ items, tone }: { items: string[]; tone: "good" | "bad" }) {
-  const cls =
-    tone === "good"
-      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
-      : "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200";
+  const color = tone === "good" ? "var(--c1)" : "var(--c3)";
   return (
     <div className="flex flex-wrap gap-2">
       {items.map((item) => (
         <span
           key={item}
-          className={`rounded-full px-3 py-1 text-xs font-medium ${cls}`}
+          className="border px-3 py-1 font-mono text-[11px] uppercase tracking-wider"
+          style={{
+            color,
+            borderColor: `color-mix(in oklab, ${color} 55%, transparent)`,
+            background: `color-mix(in oklab, ${color} 10%, transparent)`,
+          }}
         >
           {item}
         </span>
@@ -47,74 +48,78 @@ function Overview({
   unit: UnitSystem;
 }) {
   const goalKg = content.months[5].targetWeightKg;
+  const stats: [string, string][] = [
+    ["Calories", `${content.dailyCalories}`],
+    ["Protein", `${content.proteinG}g`],
+    ["Carbs", `${content.carbsG}g`],
+    ["Fat", `${content.fatG}g`],
+    [
+      "6-mo target",
+      `${formatWeight(startWeightKg, unit)} → ${formatWeight(goalKg, unit)}`,
+    ],
+  ];
+
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <p className="text-gray-700 dark:text-gray-200">{content.summary}</p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
-            {[
-              ["Calories", `${content.dailyCalories}`],
-              ["Protein", `${content.proteinG}g`],
-              ["Carbs", `${content.carbsG}g`],
-              ["Fat", `${content.fatG}g`],
-              [
-                "6-mo target",
-                `${formatWeight(startWeightKg, unit)} → ${formatWeight(goalKg, unit)}`,
-              ],
-            ].map(([label, value]) => (
+    <div className="space-y-5">
+      <Frame className="cp-glow">
+        <div className="space-y-5 p-6">
+          <HudLabel>{"// 01 · BRIEFING"}</HudLabel>
+          <p className="text-sm leading-relaxed text-[color:var(--cp-muted)]">
+            {content.summary}
+          </p>
+          <div className="grid grid-cols-2 gap-3 text-center md:grid-cols-5">
+            {stats.map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-xl border border-gray-200 dark:border-gray-800 p-3"
+                className="border border-[color:var(--cp-line)] bg-[var(--cp-tint)] p-3"
               >
-                <p className="text-[11px] uppercase tracking-wide text-gray-400">
+                <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[color:var(--cp-faint)]">
                   {label}
                 </p>
-                <p className="text-sm font-bold text-black dark:text-white">
+                <p className="mt-1 text-sm font-black text-[color:var(--c1)]">
                   {value}
                 </p>
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </Frame>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-emerald-600 dark:text-emerald-400">
+      <div className="grid gap-5 md:grid-cols-2">
+        <Frame>
+          <div className="space-y-4 p-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[color:var(--c1)]">
               ✅ Eat more of
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </p>
             <Pills items={content.foodsToEat} tone="good" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-600 dark:text-red-400">
+          </div>
+        </Frame>
+        <Frame>
+          <div className="space-y-4 p-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[color:var(--c3)]">
               🚫 Stay away from
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </p>
             <Pills items={content.foodsToAvoid} tone="bad" />
-          </CardContent>
-        </Card>
+          </div>
+        </Frame>
       </div>
 
       {content.dailyHabits.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily habits</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+        <Frame>
+          <div className="space-y-4 p-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[color:var(--c2)]">
+              Daily habits
+            </p>
+            <ul className="space-y-2 text-sm text-[color:var(--cp-muted)]">
               {content.dailyHabits.map((h) => (
-                <li key={h}>{h}</li>
+                <li key={h} className="flex gap-3">
+                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 bg-[color:var(--c1)]" />
+                  <span>{h}</span>
+                </li>
               ))}
             </ul>
-          </CardContent>
-        </Card>
+          </div>
+        </Frame>
       )}
     </div>
   );
@@ -122,120 +127,146 @@ function Overview({
 
 export function PlanView({ plan, unit, onRetry, retrying }: PlanViewProps) {
   const [now] = useState(() => Date.now());
+  const [selected, setSelected] = useState<number | null>(null);
 
   if (plan.status === "generating") {
     return (
-      <Card>
-        <CardContent className="py-12 flex flex-col items-center gap-3 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-          <p className="font-semibold text-black dark:text-white">
+      <Frame className="cp-glow">
+        <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[color:var(--c1)]" />
+          <HudLabel>{"// COMPILING PLAN"}</HudLabel>
+          <p className="font-bold text-[color:var(--cp-fg)]">
             Your coach is building your 6-month plan…
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[color:var(--cp-muted)]">
             This usually takes under a minute.{" "}
             {plan.progressChars > 0 &&
               `Written so far: ${plan.progressChars.toLocaleString()} characters.`}
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </Frame>
     );
   }
 
   if (plan.status === "failed" || !plan.content) {
     return (
-      <Card>
-        <CardContent className="py-10 flex flex-col items-center gap-3 text-center">
-          <p className="font-semibold text-black dark:text-white">
+      <Frame>
+        <div className="flex flex-col items-center gap-3 px-6 py-10 text-center">
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[color:var(--c3)]">
+            {"// ERROR · PLAN FAILED"}
+          </p>
+          <p className="font-bold text-[color:var(--cp-fg)]">
             We couldn&apos;t finish your plan
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[color:var(--cp-muted)]">
             {plan.errorMessage ?? "Something went wrong."}
           </p>
-          <Button
-            onClick={onRetry}
-            disabled={retrying}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white"
-          >
-            {retrying ? "Retrying…" : "Try again"}
-          </Button>
-        </CardContent>
-      </Card>
+          <span className="cp-glow mt-2 inline-block">
+            <button
+              onClick={onRetry}
+              disabled={retrying}
+              className="cp-btn inline-flex items-center px-8 py-3 text-sm"
+            >
+              {retrying ? "Retrying…" : "Try again"}
+            </button>
+          </span>
+        </div>
+      </Frame>
     );
   }
 
   const content = plan.content;
   const thisMonth = currentMonth(plan.startedAt, now);
+  const active = selected ?? thisMonth;
+  const m = content.months.find((x) => x.month === active) ?? content.months[0];
+  const weeklyMinutes = m.workouts.reduce((sum, w) => sum + w.minutes, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <Overview
         content={content}
         startWeightKg={plan.startWeightKg}
         unit={unit}
       />
 
-      <Tabs defaultValue={String(thisMonth)}>
-        <TabsList className="flex-wrap h-auto">
-          {content.months.map((m) => (
-            <TabsTrigger key={m.month} value={String(m.month)}>
-              Month {m.month}
-              {m.month === thisMonth ? " •" : ""}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {content.months.map((m) => {
-          const weeklyMinutes = m.workouts.reduce(
-            (sum, w) => sum + w.minutes,
-            0,
-          );
-          return (
-            <TabsContent
-              key={m.month}
-              value={String(m.month)}
-              className="space-y-3"
+      <section>
+        <SectionHead code="02 · TIMELINE" title="Month by month" />
+
+        <div
+          role="tablist"
+          aria-label="Plan months"
+          className="mb-5 flex flex-wrap gap-2"
+        >
+          {content.months.map((x) => (
+            <button
+              key={x.month}
+              role="tab"
+              type="button"
+              aria-selected={x.month === active}
+              onClick={() => setSelected(x.month)}
+              className="cp-tab"
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle>{m.focus || `Month ${m.month}`}</CardTitle>
-                  <p className="text-sm text-gray-500">
-                    {m.workouts.length} sessions · {weeklyMinutes} min/week (~
-                    {(weeklyMinutes / 60).toFixed(1)} h) · target{" "}
-                    {formatWeight(m.targetWeightKg, unit)}
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {m.workouts.map((w, i) => (
-                    <div
-                      key={`${w.day}-${i}`}
-                      className="rounded-xl border border-gray-200 dark:border-gray-800 p-3"
-                    >
-                      <div className="flex justify-between gap-2">
-                        <p className="font-semibold text-black dark:text-white">
-                          {w.day} · {w.title}
-                        </p>
-                        <span className="text-xs text-gray-500 shrink-0">
-                          {w.minutes} min
-                        </span>
-                      </div>
-                      {w.details && (
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                          {w.details}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                  {m.nutritionNotes && (
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      🍽️ <span className="font-semibold">Nutrition:</span>{" "}
-                      {m.nutritionNotes}
+              Month {x.month}
+              {x.month === thisMonth ? " •" : ""}
+            </button>
+          ))}
+        </div>
+
+        <Frame className="cp-glow-c">
+          <div role="tabpanel" className="space-y-4 p-6">
+            <div>
+              <HudLabel>{`// MONTH ${String(m.month).padStart(2, "0")}`}</HudLabel>
+              <h3 className="mt-2 text-xl font-black uppercase tracking-tight text-[color:var(--cp-fg)]">
+                {m.focus || `Month ${m.month}`}
+              </h3>
+              <p className="mt-1 font-mono text-xs tracking-wide text-[color:var(--cp-muted)]">
+                {m.workouts.length} sessions · {weeklyMinutes} min/week (~
+                {(weeklyMinutes / 60).toFixed(1)} h) · target{" "}
+                <span className="text-[color:var(--c1)]">
+                  {formatWeight(m.targetWeightKg, unit)}
+                </span>
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {m.workouts.map((w, i) => (
+                <div
+                  key={`${w.day}-${i}`}
+                  className="border border-[color:var(--cp-line)] border-l-2 bg-[var(--cp-tint)] p-3"
+                  style={{ borderLeftColor: "var(--c1)" }}
+                >
+                  <div className="flex justify-between gap-2">
+                    <p className="font-bold text-[color:var(--cp-fg)]">
+                      <span className="font-mono text-[color:var(--c2)]">
+                        {w.day}
+                      </span>{" "}
+                      · {w.title}
+                    </p>
+                    <span className="shrink-0 font-mono text-xs text-[color:var(--c1)]">
+                      {w.minutes} min
+                    </span>
+                  </div>
+                  {w.details && (
+                    <p className="mt-1 text-sm text-[color:var(--cp-muted)]">
+                      {w.details}
                     </p>
                   )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          );
-        })}
-      </Tabs>
+                </div>
+              ))}
+            </div>
+
+            {m.nutritionNotes && (
+              <p className="border-t border-[color:var(--cp-line)] pt-4 text-sm text-[color:var(--cp-muted)]">
+                🍽️{" "}
+                <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[color:var(--c2)]">
+                  Nutrition:
+                </span>{" "}
+                {m.nutritionNotes}
+              </p>
+            )}
+          </div>
+        </Frame>
+      </section>
     </div>
   );
 }
