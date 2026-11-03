@@ -106,3 +106,22 @@ export type Experience = Infer<typeof experienceValidator>;
 export type Equipment = Infer<typeof equipmentValidator>;
 export type DietPreference = Infer<typeof dietValidator>;
 export type UnitSystem = Infer<typeof unitValidator>;
+
+// APPEND to convex/lib/validators.ts
+
+export const moodValidator = v.union(
+  v.literal("motivated"),
+  v.literal("okay"),
+  v.literal("tired"),
+  v.literal("stressed"),
+  v.literal("discouraged"),
+  v.literal("stuck"),
+);
+
+export const inspirationKindValidator = v.union(
+  v.literal("daily"), // one per user per day, auto-created when they open the page
+  v.literal("boost"), // on demand, written for how they feel right now
+);
+
+export type Mood = Infer<typeof moodValidator>;
+export type InspirationKind = Infer<typeof inspirationKindValidator>;
