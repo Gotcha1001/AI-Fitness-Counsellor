@@ -3,6 +3,8 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import {
   goalValidator,
+  inspirationKindValidator,
+  moodValidator,
   planContentValidator,
   profileFields,
   statusValidator,
@@ -71,4 +73,25 @@ export default defineSchema({
   })
     .index("by_plan", ["planId"])
     .index("by_user", ["userId"]),
+  // 1) Add to the import list in convex/schema.ts:
+  //    import { inspirationKindValidator, moodValidator, ... } from "./lib/validators";
+  //
+  // 2) Add this table inside defineSchema({ ... }) after `checkIns`:
+
+  // AI encouragement: one "daily" row per user per local day + on-demand "boost" rows.
+  inspirations: defineTable({
+    userId: v.id("users"),
+    dateKey: v.string(), // user's LOCAL date, "YYYY-MM-DD"
+    kind: inspirationKindValidator,
+    mood: v.optional(moodValidator), // boosts only
+    note: v.optional(v.string()), // boosts only, what they typed (max 300 chars)
+    status: statusValidator, // generating | ready | failed
+    message: v.optional(v.string()), // streamed in while generating
+    mantra: v.optional(v.string()), // short one-liner to remember
+    planMonth: v.optional(v.number()), // 1..6 at time of writing
+    saved: v.boolean(), // user starred it
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_date", ["userId", "dateKey"]),
 });
