@@ -10,6 +10,7 @@ import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { getCurrentUser, requireUser } from "./lib/auth";
 import { planContentValidator } from "./lib/validators";
+import { startRecipeSet } from "./lib/startRecipes";
 
 /** Latest plan for the signed-in user (generating, ready or failed). */
 export const getActive = query({
@@ -93,11 +94,23 @@ export const setProgress = internalMutation({
 export const finishPlan = internalMutation({
   args: { planId: v.id("plans"), content: planContentValidator },
   handler: async (ctx, { planId, content }): Promise<void> => {
+    const plan = await ctx.db.get(planId);
     await ctx.db.patch(planId, {
       status: "ready",
       content,
       errorMessage: undefined,
     });
+    if (!plan) return;
+
+    // Kick off the recipes for this plan (skip if a set already exists for it).
+    const latest = await ctx.db
+      .query("recipeSets")
+      .withIndex("by_user", (q) => q.eq("userId", plan.userId))
+      .order("desc")
+      .first();
+    if (!latest || latest.planId !== planId) {
+      await startRecipeSet(ctx, plan.userId, planId);
+    }
   },
 });
 

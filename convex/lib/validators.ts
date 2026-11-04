@@ -125,3 +125,38 @@ export const inspirationKindValidator = v.union(
 
 export type Mood = Infer<typeof moodValidator>;
 export type InspirationKind = Infer<typeof inspirationKindValidator>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// APPEND this block to the bottom of convex/lib/validators.ts
+// (`v` and `Infer` are already imported at the top of that file.)
+// parseRecipes.ts already does `import type { MealType, Recipe } from "./validators"`,
+// and recipes.ts already does `import { recipeValidator } from "./lib/validators"`.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ---- AI generated recipes ----
+export const mealTypeValidator = v.union(
+  v.literal("breakfast"),
+  v.literal("lunch"),
+  v.literal("dinner"),
+  v.literal("snack"),
+);
+
+/** One recipe. Shape must match what parseRecipes.ts returns. */
+export const recipeValidator = v.object({
+  title: v.string(),
+  mealType: mealTypeValidator,
+  description: v.string(), // one sentence on why it fits THIS person's plan ("" if missing)
+  prepMinutes: v.number(),
+  cookMinutes: v.number(),
+  servings: v.number(),
+  caloriesPerServing: v.number(),
+  proteinG: v.number(),
+  carbsG: v.number(),
+  fatG: v.number(),
+  ingredients: v.array(v.string()),
+  steps: v.array(v.string()),
+  tip: v.optional(v.string()),
+});
+
+export type MealType = Infer<typeof mealTypeValidator>;
+export type Recipe = Infer<typeof recipeValidator>;

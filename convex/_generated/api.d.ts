@@ -17,10 +17,14 @@ import type * as lib_auth from "../lib/auth.js";
 import type * as lib_nutrition from "../lib/nutrition.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_parsePlan from "../lib/parsePlan.js";
+import type * as lib_parseRecipes from "../lib/parseRecipes.js";
 import type * as lib_schedule from "../lib/schedule.js";
+import type * as lib_startRecipes from "../lib/startRecipes.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as plans from "../plans.js";
 import type * as profiles from "../profiles.js";
+import type * as recipes from "../recipes.js";
+import type * as recipesAi from "../recipesAi.js";
 import type * as user from "../user.js";
 
 import type {
@@ -39,10 +43,14 @@ declare const fullApi: ApiFromModules<{
   "lib/nutrition": typeof lib_nutrition;
   "lib/openrouter": typeof lib_openrouter;
   "lib/parsePlan": typeof lib_parsePlan;
+  "lib/parseRecipes": typeof lib_parseRecipes;
   "lib/schedule": typeof lib_schedule;
+  "lib/startRecipes": typeof lib_startRecipes;
   "lib/validators": typeof lib_validators;
   plans: typeof plans;
   profiles: typeof profiles;
+  recipes: typeof recipes;
+  recipesAi: typeof recipesAi;
   user: typeof user;
 }>;
 

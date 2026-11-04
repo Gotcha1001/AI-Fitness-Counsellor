@@ -21,6 +21,7 @@ import {
   Dumbbell,
   PanelLeftClose,
   Sparkles,
+  UtensilsCrossed,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,6 +32,7 @@ import { CyberStyles, Frame, HudLabel } from "@/app/components/Cyber";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/plan", label: "My 6-Month Plan", icon: ClipboardList },
+  { href: "/recipes", label: "Recipes", icon: UtensilsCrossed },
   { href: "/check-in", label: "Monthly Check-in", icon: CalendarCheck },
   { href: "/inspirations", label: "Inspirations", icon: Sparkles },
   { href: "/settings", label: "My Profile", icon: Settings },
