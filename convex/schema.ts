@@ -7,6 +7,7 @@ import {
   moodValidator,
   planContentValidator,
   profileFields,
+  recipeValidator,
   statusValidator,
 } from "./lib/validators";
 
@@ -94,4 +95,16 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_user_and_date", ["userId", "dateKey"]),
+  // AI-written recipes for a plan. Latest row per user is the active one.
+  recipeSets: defineTable({
+    userId: v.id("users"),
+    planId: v.id("plans"),
+    status: statusValidator, // generating | ready | failed
+    progressChars: v.number(), // streamed length, drives the "coach is cooking" UI
+    recipes: v.optional(v.array(recipeValidator)),
+    errorMessage: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_plan", ["planId"]),
 });
