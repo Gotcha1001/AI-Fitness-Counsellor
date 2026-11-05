@@ -160,3 +160,50 @@ export const recipeValidator = v.object({
 
 export type MealType = Infer<typeof mealTypeValidator>;
 export type Recipe = Infer<typeof recipeValidator>;
+
+// ═════════════════════════════════════════════════════════════════════════════
+// 1) APPEND to convex/lib/validators.ts  (`v` and `Infer` are already imported)
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ---- AI generated monthly meal plan (4 weeks) ----
+export const mealItemValidator = v.object({
+  food: v.string(), // "Chicken breast, grilled"
+  portion: v.string(), // "150 g" | "2 slices" | "1 cup"
+});
+
+export const plannedMealValidator = v.object({
+  name: v.string(), // "Chicken, rice & broccoli"
+  items: v.array(mealItemValidator),
+  calories: v.number(),
+  proteinG: v.number(),
+  carbsG: v.number(),
+  fatG: v.number(),
+});
+
+export const dayWorkoutValidator = v.object({
+  title: v.string(), // "Upper body" | "Rest day"
+  minutes: v.number(), // 0 on rest days
+  details: v.string(),
+});
+
+export const mealDayValidator = v.object({
+  day: v.string(), // Monday..Sunday
+  breakfast: plannedMealValidator,
+  lunch: plannedMealValidator,
+  dinner: plannedMealValidator,
+  snack: v.optional(plannedMealValidator), // only when the user eats 4+ meals a day
+  totalCalories: v.number(),
+  workout: dayWorkoutValidator,
+});
+
+export const mealWeekValidator = v.object({
+  week: v.number(), // 1..4
+  focus: v.string(), // one short line about this week
+  days: v.array(mealDayValidator), // always 7
+});
+
+export type MealItem = Infer<typeof mealItemValidator>;
+export type PlannedMeal = Infer<typeof plannedMealValidator>;
+export type DayWorkout = Infer<typeof dayWorkoutValidator>;
+export type MealDay = Infer<typeof mealDayValidator>;
+export type MealWeek = Infer<typeof mealWeekValidator>;
