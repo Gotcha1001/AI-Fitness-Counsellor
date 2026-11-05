@@ -4,6 +4,7 @@ import { v } from "convex/values";
 import {
   goalValidator,
   inspirationKindValidator,
+  mealWeekValidator,
   moodValidator,
   planContentValidator,
   profileFields,
@@ -104,6 +105,21 @@ export default defineSchema({
     recipes: v.optional(v.array(recipeValidator)),
     errorMessage: v.optional(v.string()),
     createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_plan", ["planId"]),
+
+  // AI-written meal + workout plan for ONE month (4 weeks), generated a week at a time.
+  // Latest row per user is the active one.
+  mealPlans: defineTable({
+    userId: v.id("users"),
+    planId: v.id("plans"),
+    planMonth: v.number(), // 1..6: which month of the 6-month plan this covers
+    status: statusValidator, // generating | ready | failed
+    weeks: v.optional(v.array(mealWeekValidator)), // grows 1 -> 4 while generating
+    errorMessage: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(), // bumped after every finished week (stuck detection)
   })
     .index("by_user", ["userId"])
     .index("by_plan", ["planId"]),

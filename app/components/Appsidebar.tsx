@@ -22,6 +22,7 @@ import {
   PanelLeftClose,
   Sparkles,
   UtensilsCrossed,
+  Salad,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +34,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/plan", label: "My 6-Month Plan", icon: ClipboardList },
   { href: "/recipes", label: "Recipes", icon: UtensilsCrossed },
+  { href: "/meal-plan", label: "Meal Plan", icon: Salad },
   { href: "/check-in", label: "Monthly Check-in", icon: CalendarCheck },
   { href: "/inspirations", label: "Inspirations", icon: Sparkles },
   { href: "/settings", label: "My Profile", icon: Settings },

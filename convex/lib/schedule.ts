@@ -3,6 +3,7 @@ export const TOTAL_MONTHS = 6;
 export const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 /** Users may check in up to 3 days early. Set to MONTH_MS while testing to unlock everything. */
 export const EARLY_MS = 3 * 24 * 60 * 60 * 1000;
+export const MEAL_PLAN_WEEKS = 4;
 
 export interface CheckInWindow {
   month: number | null; // null = program finished
